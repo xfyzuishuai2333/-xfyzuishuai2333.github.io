@@ -13,60 +13,86 @@
         overflow: hidden;
       }
 
-      .heart {
-        position: relative;
-        width: 80px;
-        height: 80px;
-        background-color: red;
-        transform: rotate(-45deg);
-        margin: 100px auto;
+      h1 {
+        margin-top: 40px;
+        font-size: 28px;
+        color: #ff1493;
+      }
+
+      /* 爱心容器 */
+      .heart-container {
+        width: 200px;
+        margin: 40px auto;
         animation: heartbeat 1s infinite;
+        position: relative;
       }
 
-      .heart::before,
-      .heart::after {
-        content: "";
-        position: absolute;
-        width: 80px;
-        height: 80px;
-        background-color: red;
-        border-radius: 50%;
+      svg {
+        width: 100%;
+        height: auto;
       }
 
-      .heart::before {
-        top: -40px;
-        left: 0;
+      path {
+        fill: red;
       }
 
-      .heart::after {
-        top: 0;
-        left: 40px;
-      }
-
+      /* 跳动动画 */
       @keyframes heartbeat {
-        0% {
-          transform: rotate(-45deg) scale(1);
-        }
-        25% {
-          transform: rotate(-45deg) scale(1.1);
+        0%,
+        100% {
+          transform: scale(1);
         }
         50% {
-          transform: rotate(-45deg) scale(1.2);
-        }
-        75% {
-          transform: rotate(-45deg) scale(1.1);
-        }
-        100% {
-          transform: rotate(-45deg) scale(1);
+          transform: scale(1.15);
         }
       }
 
+      /* 飞散动画 */
+      .break-left {
+        animation: break-left 1s forwards;
+      }
+      .break-right {
+        animation: break-right 1s forwards;
+      }
+      @keyframes break-left {
+        to {
+          transform: translateX(-200px) rotate(-30deg);
+          opacity: 0;
+        }
+      }
+      @keyframes break-right {
+        to {
+          transform: translateX(200px) rotate(30deg);
+          opacity: 0;
+        }
+      }
+
+      /* 碎片 */
+      .fragment {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: red;
+        border-radius: 50%;
+        animation: fall 1.5s forwards;
+      }
+      @keyframes fall {
+        0% {
+          transform: translate(0, 0) rotate(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--dx), 300px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* 按钮区域 */
       .buttons {
         margin-top: 40px;
         position: relative;
-        height: 300px;
+        height: 60px;
       }
-
       button {
         padding: 12px 25px;
         font-size: 18px;
@@ -75,19 +101,20 @@
         cursor: pointer;
         transition: all 0.3s ease;
         margin: 10px;
+        position: absolute;
       }
-
       .yes-btn {
         background-color: #ff69b4;
         color: white;
+        left: 40%;
       }
-
       .no-btn {
         background-color: #9e9e9e;
         color: white;
-        position: relative;
+        left: 55%;
       }
 
+      /* 烟花背景 */
       .fireworks {
         position: fixed;
         top: 0;
@@ -97,22 +124,33 @@
         z-index: -1;
         opacity: 0;
         transition: all 1s ease;
+        background-size: cover;
       }
-
       .fireworks.active {
         z-index: 999;
-        opacity: 0.3;
+        opacity: 0.2;
       }
     </style>
   </head>
   <body>
-    <div class="heart"></div>
+    <h1>关辰熙gege给你我的心 😍</h1>
+
+    <!-- 完整爱心 -->
+    <div class="heart-container" id="heart">
+      <svg viewBox="0 0 512 512">
+        <path
+          id="full-heart"
+          d="M256 464C100 312 32 244 32 160 32 94 86 40 152 40c44 0 84 24 104 60 20-36 60-60 104-60 66 0 120 54 120 120 0 84-68 152-224 304z"
+        />
+      </svg>
+    </div>
 
     <div class="buttons">
       <button class="yes-btn" onclick="accept()">要它</button>
       <button class="no-btn" id="noBtn" onclick="refuse()">不要它</button>
     </div>
 
+    <!-- 烟花背景 -->
     <div
       class="fireworks"
       id="fireworks"
@@ -122,55 +160,91 @@
     ></div>
 
     <script>
-      const fireworks = document.getElementById("fireworks");
-      const heart = document.querySelector(".heart");
+      let firstNoClick = true;
       const noBtn = document.getElementById("noBtn");
-      let refuseClicked = false;
+      const heartContainer = document.getElementById("heart");
+      const fireworks = document.getElementById("fireworks");
 
       function accept() {
         fireworks.classList.add("active");
-        heart.style.display = "none";
-
-        setTimeout(() => {
-          document.body.innerHTML = `
-        <h1 style="color:#ff1493;margin-top:80px;font-size:32px;">🎆 点开了就没法关闭啦～</h1>
-        <h2 style="color:#e91e63;font-size:24px;">又美丽又浪漫的你终于点了「要它」❤️<br>烟花已经为这一刻绽放啦</h2>
-        <div class="fireworks active" style="background-image: url('https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmljYWE1Y21rbGY0MzI4bDJpcGFhNzN2ZXNra3hqNWw2cmZtOXlobyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26tOZ42Mg6pbTUPHW/giphy.gif');"></div>
-      `;
-        }, 500);
+        heartContainer.style.display = "none";
+        document.body.innerHTML = `
+    <h1 style="color:#ff1493;margin-top:80px;font-size:32px;">🎆 点开了就没法关闭啦～</h1>
+    <h2 style="color:#e91e63;font-size:24px;">又美丽又浪漫的你终于点了「要它」❤️<br>烟花已经为这一刻绽放啦</h2>
+    <div class="fireworks active" style="background-image: url('https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmljYWE1Y21rbGY0MzI4bDJpcGFhNzN2ZXNra3hqNWw2cmZtOXlobyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26tOZ42Mg6pbTUPHW/giphy.gif');"></div>
+  `;
       }
 
       function refuse() {
-        // 第一次点击后激活“飞行”模式
-        if (!refuseClicked) {
-          refuseClicked = true;
-          noBtn.style.position = "absolute"; // 切换为绝对定位
+        if (firstNoClick) {
+          breakHeart();
+          moveButtonRandom(noBtn);
+          firstNoClick = false;
+        } else {
+          moveButtonRandom(noBtn);
         }
-        moveButtonRandomly();
       }
 
-      function moveButtonRandomly() {
-        const btnWidth = noBtn.offsetWidth;
-        const btnHeight = noBtn.offsetHeight;
-
-        // 获取可视区域尺寸
+      function moveButtonRandom(btn) {
+        const btnWidth = btn.offsetWidth;
+        const btnHeight = btn.offsetHeight;
         const maxX = window.innerWidth - btnWidth;
         const maxY = window.innerHeight - btnHeight;
-
-        // 随机坐标（不超过可视区域）
-        const randomX = Math.floor(Math.random() * maxX);
-        const randomY = Math.floor(Math.random() * maxY);
-
-        noBtn.style.left = `${randomX}px`;
-        noBtn.style.top = `${randomY}px`;
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
+        btn.style.left = `${x}px`;
+        btn.style.top = `${y}px`;
       }
 
-      // 每次点击按钮都飞
-      noBtn.addEventListener("click", () => {
-        if (refuseClicked) {
-          moveButtonRandomly();
+      function breakHeart() {
+        const heartRect = heartContainer.getBoundingClientRect();
+
+        // 删除完整心
+        const fullHeart = document.getElementById("full-heart");
+        fullHeart.remove();
+
+        // 创建左半心
+        const leftHalf = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path"
+        );
+        leftHalf.setAttribute(
+          "d",
+          "M256 464C100 312 32 244 32 160 32 94 86 40 152 40c44 0 84 24 104 60z"
+        );
+        leftHalf.setAttribute("fill", "red");
+        leftHalf.classList.add("break-left");
+
+        // 创建右半心
+        const rightHalf = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path"
+        );
+        rightHalf.setAttribute(
+          "d",
+          "M256 464C412 312 480 244 480 160 480 94 426 40 360 40c-44 0-84 24-104 60z"
+        );
+        rightHalf.setAttribute("fill", "red");
+        rightHalf.classList.add("break-right");
+
+        heartContainer.querySelector("svg").appendChild(leftHalf);
+        heartContainer.querySelector("svg").appendChild(rightHalf);
+
+        createFragments(heartRect);
+      }
+
+      function createFragments(rect) {
+        for (let i = 0; i < 20; i++) {
+          const frag = document.createElement("div");
+          frag.className = "fragment";
+          frag.style.left = `${rect.left + rect.width / 2}px`;
+          frag.style.top = `${rect.top + rect.height / 2}px`;
+          const dx = (Math.random() - 0.5) * 200 + "px";
+          frag.style.setProperty("--dx", dx);
+          document.body.appendChild(frag);
+          setTimeout(() => frag.remove(), 2000);
         }
-      });
+      }
     </script>
   </body>
 </html>
