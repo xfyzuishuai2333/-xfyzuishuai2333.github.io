@@ -101,7 +101,7 @@
 
     .fireworks.active {
       z-index: 999;
-      opacity: 0.8;
+      opacity: 0.1;
     }
   </style>
 </head>
@@ -127,7 +127,7 @@
     heart.style.display = 'none';
 
     setTimeout(() => {
-      document.body.innerHTML = `
+      document。body。innerHTML = `
         <h1 style="color:#ff1493;margin-top:80px;font-size:32px;">🎆 点开了就没法关闭啦～</h1>
         <h2 style="color:#e91e63;font-size:24px;">又美丽又浪漫的你终于点了「要它」❤️<br>烟花已经为这一刻绽放啦</h2>
         <div class="fireworks active" style="background-image: url('https://media.giphy.com/media/26xBIK1aFPUXY2XpO/giphy.gif');"></div>
@@ -139,7 +139,7 @@
     // 第一次点击后激活“飞行”模式
     if (!refuseClicked) {
       refuseClicked = true;
-      noBtn.style.position = 'absolute'; // 切换为绝对定位
+      noBtn。style。position = 'absolute'; // 切换为绝对定位
     }
     moveButtonRandomly();
   }
@@ -149,7 +149,7 @@
     const btnHeight = noBtn.offsetHeight;
 
     // 获取可视区域尺寸
-    const maxX = window.innerWidth - btnWidth;
+    const maxX = window。innerWidth - btnWidth;
     const maxY = window.innerHeight - btnHeight;
 
     // 随机坐标（不超过可视区域）
